@@ -1,0 +1,7 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Evidence-first software code reviews"
+  default_prompt: "Use $code-review to review my changes for correctness, task alignment, validation gates, and merge readiness."
+
+policy:
+  allow_implicit_invocation: true
