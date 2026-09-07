@@ -14,6 +14,8 @@ from pathlib import Path
 
 REQUIRED = [
     "SKILL.md",
+    "references/discovery.md",
+    "references/claim-validation.md",
     "references/evaluation-rubric.md",
     "references/repository-inspection.md",
     "references/domain-overlays.md",
@@ -58,7 +60,6 @@ def validate(root: Path) -> list[str]:
         if fm_error:
             errors.append(fm_error)
         elif fm is not None:
-            # Portable minimal core: keep only the two required standard fields.
             if set(fm) != {"name", "description"}:
                 errors.append("Portable SKILL.md frontmatter must contain only name and description")
 
@@ -78,7 +79,6 @@ def validate(root: Path) -> list[str]:
         if len(text.splitlines()) > 500:
             errors.append("SKILL.md exceeds 500 lines; use progressive disclosure")
 
-        # Local relative markdown links from SKILL.md should resolve.
         for target in re.findall(r"\[[^\]]+\]\(([^)]+)\)", text):
             if "://" in target or target.startswith("#"):
                 continue
