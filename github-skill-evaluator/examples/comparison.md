@@ -1,26 +1,27 @@
-# Example: Comparison and stack selection
+# Example: comparison without false precision
 
-Illustrative fictional repositories.
+Fictional example; not benchmark evidence.
 
-| Rank | Skill | Intrinsic | Fit: premium web implementation | Uplift | Evidence | Verdict |
-|---:|---|---:|---:|---|---|---|
-| 1 | `precision-ui/frontend-craft` | 88 | 93 | High | Moderate | Install |
-| 2 | `pixelsafe/visual-qa` | 86 | 91 | High | Strong | Install |
-| 3 | `viral-prompts/beautiful-ui` | 67 | 73 | Low | Weak | Use selectively |
+## Ranking
 
-## Why #1 wins
+| Rank | Skill | Promise | Coverage | Uplift | Intrinsic | Fit | Verdict |
+|---:|---|---|---:|---|---:|---:|---|
+| 1 | Skill A | Supported | 95% | Strong — Probed | 82 | 93 | Install |
+| 2 | Skill B | Partially supported | 90% | Adequate — Inferred | 79 | 88 | Install with modifications |
+| 3 | Skill C | Unproven | 80% | Weak — Inferred | 67 | 72 | Use selectively |
 
-`frontend-craft` encodes stronger generation-time design decisions: hierarchy, typography, responsive structure, component constraints, and implementation checks. `visual-qa` is slightly stronger in evidence and verification but is primarily an evaluator, not a generator. The score difference is small enough that the two should be considered peers for different responsibilities rather than substitutes.
+Skill A wins because it has a concrete workflow plus a same-model baseline probe showing material improvement on the requested task. Skill B is close in secondary arithmetic but lacks probe evidence, so the three-point score gap is not the reason for the ordering. Skill C is portable and polished but largely restates generic advice.
 
-## Best combination
+### Decisive evidence
 
-1. **frontend-craft** — owns design/implementation decisions.
-2. **visual-qa** — owns independent capture/comparison and regression verification.
+- **A:** representative probe + explicit verification loop.
+- **B:** strong static methodology, but uplift remains inferred.
+- **C:** documentation is stronger than behavioral evidence.
 
-**Complementarity:** High. Generation and verification are distinct.  
-**Overlap:** Both mention responsive/accessibility checks, but ownership remains separable.  
-**Instruction conflicts:** None material found.  
-**Context cost:** Moderate; load visual QA after implementation or at explicit validation gates.  
-**Activation order:** frontend-craft → visual-qa → targeted frontend-craft fixes → visual-qa recheck.
+### Stack compatibility
 
-Do not add `beautiful-ui` by default: it overlaps with generation guidance while adding little unique capability, increasing context cost and instruction ambiguity.
+A + a dedicated visual-QA skill may be complementary if responsibilities are separated. A + B likely duplicates design-generation guidance and increases instruction conflict/context cost.
+
+### Counter-cases
+
+For each candidate, record the strongest argument against its placement and what observation would change the ranking. Do not hide disagreement behind decimal scores.
