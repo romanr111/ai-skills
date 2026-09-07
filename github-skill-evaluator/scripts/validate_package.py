@@ -62,11 +62,20 @@ def validate(root: Path) -> list[str]:
             if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name): errors.append("Skill name must be lowercase kebab-case")
             if root.name != name: errors.append(f"Skill name {name!r} must match directory {root.name!r}")
             if not (1 <= len(description) <= 1024): errors.append("Skill description must be 1-1024 characters")
+            if "<" in name or ">" in name or "<" in description or ">" in description: errors.append("Skill name/description must not contain XML-like angle brackets")
         if len(text.splitlines()) > 500: errors.append("SKILL.md exceeds 500 lines; use progressive disclosure")
         for target in re.findall(r"\[[^\]]+\]\(([^)]+)\)", text):
             if "://" in target or target.startswith("#"): continue
             clean = target.split("#", 1)[0]
             if clean and not (root / clean).exists(): errors.append(f"Broken relative reference in SKILL.md: {target}")
+
+    openai_yaml = root / "agents/openai.yaml"
+    if openai_yaml.is_file():
+        meta = openai_yaml.read_text(encoding="utf-8")
+        match = re.search(r'^\s*short_description:\s*"([^"]+)"', meta, flags=re.M)
+        if not match or not 25 <= len(match.group(1)) <= 64: errors.append("agents/openai.yaml short_description must be 25-64 characters")
+        match = re.search(r'^\s*default_prompt:\s*"([^"]+)"', meta, flags=re.M)
+        if not match or "$github-skill-evaluator" not in match.group(1): errors.append("agents/openai.yaml default_prompt must mention $github-skill-evaluator")
 
     score_path = root / "scripts/score_skill.py"
     if score_path.is_file():
@@ -133,7 +142,7 @@ def main() -> int:
     if errors:
         for error in errors: print(f"ERROR: {error}")
         return 1
-    print("OK: structure, evidence-band rubric, scorer invariants, and eval schemas validated")
+    print("OK: structure, metadata, evidence-band rubric, scorer invariants, and eval schemas validated")
     return 0
 
 
