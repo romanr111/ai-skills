@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Inventory a local skill repository without judging its quality.
 
-Stdlib-only. Emits JSON with likely evaluation-relevant files and simple counts.
+Stdlib-only. Emits navigation data plus rough context-cost measurements.
+Estimated tokens use bytes/4 as a heuristic, not a tokenizer.
 """
 
 from __future__ import annotations
 
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -18,6 +20,17 @@ INTERESTING_NAMES = {
     "Makefile", "Dockerfile", ".mcp.json",
 }
 INTERESTING_DIRS = {"scripts", "references", "examples", "tests", "test", "evals", "fixtures", "agents", "hooks", ".github"}
+
+
+def _text_stats(path: Path) -> dict:
+    data = path.read_bytes()
+    text = data.decode("utf-8", errors="replace")
+    return {
+        "file": path.name,
+        "bytes": len(data),
+        "lines": len(text.splitlines()),
+        "est_tokens": math.ceil(len(data) / 4),
+    }
 
 
 def inventory(root: Path) -> dict:
@@ -49,26 +62,42 @@ def inventory(root: Path) -> dict:
             ):
                 relevant.append(rel)
 
+    root_skill = root / "SKILL.md"
+    always_loaded = _text_stats(root_skill) if root_skill.is_file() else None
+    on_demand_paths = [root / rel for rel in sorted(set(relevant)) if rel != "SKILL.md" and (root / rel).is_file()]
+    on_demand_bytes = sum(p.stat().st_size for p in on_demand_paths)
+
     return {
         "root": str(root),
         "file_count": len(files),
         "skill_files": sorted(skill_files),
         "relevant_files": sorted(relevant),
         "extension_counts": dict(sorted(ext_counts.items())),
+        "context_cost": {
+            "always_loaded": always_loaded,
+            "on_demand": {
+                "files": len(on_demand_paths),
+                "bytes": on_demand_bytes,
+                "est_tokens": math.ceil(on_demand_bytes / 4),
+            },
+            "budget_note": "est_tokens ≈ bytes/4; rough heuristic, not a tokenizer",
+            "skill_md_under_500_lines": always_loaded["lines"] <= 500 if always_loaded is not None else None,
+        },
         "notes": [
             "This is a navigation inventory, not a quality score.",
-            "Inspect material files before scoring; do not infer sophistication from counts.",
+            "Context-cost estimates measure volume, not behavioral value.",
+            "Inspect material files before judging; do not infer sophistication from counts.",
         ],
     }
 
 
 def main() -> int:
     if len(sys.argv) != 2:
-        print(f"Usage: {Path(sys.argv[0]).name} /path/to/repo", file=sys.stderr)
+        print(f"Usage: {Path(sys.argv[0]).name} /path/to/skill", file=sys.stderr)
         return 2
     try:
         result = inventory(Path(sys.argv[1]))
-    except ValueError as exc:
+    except (ValueError, OSError) as exc:
         print(str(exc), file=sys.stderr)
         return 2
     print(json.dumps(result, indent=2))
