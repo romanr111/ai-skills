@@ -9,7 +9,7 @@ Fictional example showing the output shape; it is not benchmark evidence.
 **Confidence:** Medium
 **Coverage:** 90%
 **Capability uplift:** Adequate — Inferred
-**Intrinsic score:** 79/100 — B *(secondary summary)*
+**Intrinsic score:** 71/100 — B *(secondary summary)*
 **Rubric:** 2026-09-v2
 **Judge model:** example-model
 
@@ -29,6 +29,8 @@ The skill has a strong operational workflow, clear activation boundaries, and co
 | Reusability & composability | strong | portable paths and explicit dependencies |
 | Context efficiency | strong | compact SKILL.md + on-demand references |
 | Maintainability & docs | strong | clear installation/license/version notes |
+
+The 71/100 secondary score is the deterministic result of the bands above after the 10% Evidence-of-effectiveness weight abstains and the remaining 90% renormalizes.
 
 ### Counter-case
 
