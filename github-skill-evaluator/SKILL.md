@@ -1,6 +1,6 @@
 ---
 name: github-skill-evaluator
-description: Find, evaluate, compare, rank, and recommend open-source GitHub Agent Skills for reuse by Claude Code, OpenAI Codex, and other skill-capable agents. Use when discovering skills for a workflow or assessing supplied repositories for intrinsic quality, fit, capability uplift, evidence that they deliver their promises, reusability, engineering rigor, maintainability, safety, or complementary stacks. Search broadly when candidates are not supplied; inspect repository contents and validate claims rather than relying on README polish or GitHub popularity.
+description: Find, evaluate, compare, rank, and recommend open-source GitHub Agent Skills for Claude Code, OpenAI Codex, and other skill-capable agents. Use for discovering skills or assessing supplied repositories for intrinsic quality, fit, evidence that they deliver their promises, activation reliability, capability uplift, reusability, safety, maintainability, or complementary stacks. Search broadly when candidates are not supplied; inspect implementation and validate claims instead of relying on README polish or GitHub popularity.
 ---
 
 # GitHub Skill Evaluator
@@ -9,220 +9,206 @@ Find and evaluate Agent Skills as executable knowledge systems, not popularity c
 
 ## Core principles
 
-1. **Search broadly, then inspect deeply.** Search ranking is candidate discovery, not evaluation.
-2. **Inspect evidence before scoring.** Read the actual `SKILL.md` and material references, scripts, tests/evals, examples, configuration, and repository signals.
-3. **Verify promises explicitly.** Separate what the author claims from what implementation/tests or direct reproduction support.
-4. Separate **intrinsic quality** from **fit for the requested use case**.
-5. Estimate **capability uplift**: how much a strong current frontier agent improves with the skill versus without it.
-6. Treat stars, forks, watchers, contributor count, and social mentions as weak secondary evidence only.
-7. Distinguish `Verified`, `Supported`, `Plausible`, `Author claim`, `Inference`, `Unproven`, and `Contradicted` where useful.
-8. Do not reward verbosity, repository size, number of scripts, or architectural complexity by themselves.
-9. Compare candidates independently before ranking to reduce anchoring.
-10. If evidence is missing, lower confidence; do not automatically equate missing evidence with poor intrinsic quality.
+1. Search broadly, then inspect deeply. Search order is not quality.
+2. Inspect the actual `SKILL.md` and material behavior-defining files before judging.
+3. Separate author claims from evidence that the skill delivers those claims.
+4. Bind every scored judgment to inspected evidence; abstain when evidence is insufficient.
+5. Separate intrinsic quality from fit for the requested use case.
+6. Capability uplift is model-relative. `strong` or `exceptional` uplift requires a recorded baseline probe.
+7. Treat stars/forks/community signals as weak secondary context only.
+8. Measure what can be measured: context volume, file existence, tests/probes, trigger cases.
+9. Do not reward verbosity, repository size, number of scripts, or architectural complexity by themselves.
+10. The normalized score is a secondary summary, not ranking truth.
 
 ## Evaluation depth
 
 Use the cheapest depth that can answer the decision:
 
-- **Triage** — for broad discovery pools. Inspect entry point, direct references, license/reuse status, core workflow, obvious evidence, compatibility, and major red flags. Do not fully score every candidate.
-- **Standard** — default for shortlisted candidates. Apply the complete rubric and promise-to-proof review.
-- **Deep / benchmark** — use when the user asks for rigorous verification, a core claim is disputed, candidates are close, or risk is high. Reproduce safe tests and perform representative or A/B validation when feasible.
+- **Triage** — broad discovery pool. Inspect entry point, direct references, license/reuse status, core workflow, compatibility, obvious evidence, and major red flags. **Do not score.**
+- **Standard** — default for shortlisted candidates. Apply the 10-dimension evidence-bound rubric, promise-to-proof review, and mandatory counter-case.
+- **Deep / benchmark** — use when the user asks for rigorous verification, a core claim is disputed, candidates are close, or risk is high. Add safe reproduction, representative probes, and adversarial cases where feasible.
 
 Do not run untrusted code merely to increase confidence.
 
-## Required workflow
+## Workflow
 
 ### 1. Parse the decision
 
 Identify:
-- repositories or individual skills already supplied;
-- intended use case, if supplied;
-- whether the task is discovery, single-skill evaluation, comparison, ranking, or stack selection;
-- material constraints such as model, tools, operating system, language, license, environment, or offline requirements.
+- supplied repositories/skills;
+- intended use case, if any;
+- discovery vs single evaluation vs comparison/ranking vs stack selection;
+- constraints: agent/runtime, tools, OS, language, license, environment, offline requirements.
 
-Do not require a use case for intrinsic evaluation. If none is supplied, omit the fit score or label fit as `Not specified`.
+No use case is required for intrinsic evaluation. If absent, omit the fit score.
 
 ### 2. Discover candidates when needed
 
-If the user asks to **find**, **discover**, **recommend**, or identify the **best** skills without providing a complete candidate set, read [references/discovery.md](references/discovery.md).
+If the user asks to find/discover/recommend/best without a complete candidate set, read [references/discovery.md](references/discovery.md).
 
-Use multiple query families spanning domain terms, job-to-be-done terms, agent ecosystem terms, and synonyms. Use repository and code/file search when available. Build a broad pool, deduplicate forks/copies, check open-source/reuse eligibility, then triage to a decision-relevant shortlist.
+Use multiple query families across domain terms, job-to-be-done terms, ecosystem terms (`Agent Skill`, `Claude Code skill`, `Codex skill`, `SKILL.md`), and synonyms. Use repository and code/file search when available.
 
-Do not simply take the most-starred or first search results. Include credible lower-popularity candidates when available.
+Build a broad pool, deduplicate forks/copies, check license/reuse eligibility, intentionally include credible lower-popularity candidates, and triage to a decision-relevant shortlist.
 
-### 3. Inspect the repository
+### 3. Define the evaluation unit and inspect
 
-First define the **evaluation unit**. If the user names one skill inside a multi-skill repository, score that skill's behavior and supporting files; use repository-wide health/license metadata only as supporting context. Do not let strong sibling skills inflate the target skill.
+Read [references/repository-inspection.md](references/repository-inspection.md).
 
-Read [references/repository-inspection.md](references/repository-inspection.md). Inspect comparable depth for every shortlisted candidate. At minimum seek:
-- `SKILL.md` and direct behavior-defining references;
-- scripts, prompts, templates, agents, hooks, MCP/config files;
-- tests, evals, fixtures, examples, CI;
-- dependencies and installation requirements;
-- license/reuse status;
-- recent commits, releases, material issues/PRs when useful.
+If evaluating one skill inside a multi-skill repository, score that skill plus its direct/shared dependencies. Repository-wide license/health may affect it; unrelated sibling skills must not inflate expertise/workflow/evidence.
 
-Follow a reference only when it materially affects behavior or evidence. Do not recursively load irrelevant documentation.
+Inspect, as relevant:
+- `SKILL.md` and direct references;
+- scripts/prompts/templates/agents/hooks/MCP/config;
+- tests/evals/fixtures/examples/CI;
+- dependencies/installation/license;
+- commits/releases/issues/PRs where they answer a material question.
 
-If local repository access is available, optionally run:
+Stop when additional files are unlikely to change the decision.
+
+When local files are available, run:
 
 ```bash
-python3 scripts/repo_inventory.py /path/to/repo
+python3 scripts/repo_inventory.py /path/to/skill
 ```
 
-Use the inventory as navigation aid, not as a quality score.
+Use its `context_cost` measurements for Context efficiency. The inventory is navigation/measurement, not a quality score.
 
-### 4. Validate what the skill promises
+### 4. Validate promises
 
 Read [references/claim-validation.md](references/claim-validation.md).
 
-After implementation inspection, extract the **material/core promises** from README/description/docs/examples and map each to evidence. Distinguish:
-- capability claims;
-- quality/reliability claims;
-- numerical outcome/benchmark claims;
-- compatibility/portability claims;
-- safety claims.
+Extract only material/core promises and create a compact ledger:
 
-Build a compact promise-to-proof ledger: `promise → proof required → evidence found → status → limitation`.
+`promise → proof required → evidence found → status → limitation`
 
-For central promises, use the strongest safe validation level justified by the decision:
-1. static implementation match;
-2. tests/evals inspection;
-3. deterministic reproduction when safe;
-4. representative smoke task;
-5. baseline/competitor A/B when uplift is claimed or candidates are close;
-6. adversarial failure-case validation for high-risk/high-confidence claims.
+Use: `Verified`, `Supported`, `Plausible`, `Unproven`, `Contradicted`, or `Not testable here`.
 
-Never call a benchmark claim verified when its metric, baseline, methodology, or reproducibility is missing.
+Presence of tests/evals does not prove effectiveness unless they measure the promised outcome.
 
-### 5. Establish evidence strength
+### 5. Apply the evidence-bound rubric
 
-Maintain a compact internal evidence ledger before scoring: `claim/dimension → source path or observation → evidence label → limitations`.
+Read [references/evaluation-rubric.md](references/evaluation-rubric.md).
 
-Classify overall evidence:
-- **Strong**: repeatable evals/benchmarks, measured outcomes, reproduced tests/tasks, independent validation.
-- **Moderate**: meaningful repository tests/evals, realistic worked examples, issue/PR evidence, reproducible demonstrations not independently rerun.
-- **Weak**: mainly README claims, screenshots without methodology, usage anecdotes, popularity signals.
-- **None**: no meaningful effectiveness evidence found.
+At Standard/Deep depth score exactly these 10 dimensions using bands:
 
-Separate evidence of effectiveness from repository popularity.
+- Activation & scope
+- Instruction & workflow quality
+- Domain expertise
+- Verification & self-correction
+- Capability uplift
+- Evidence of effectiveness
+- Safety & failure modes
+- Reusability & composability
+- Context efficiency
+- Maintainability & docs
 
-### 6. Score the universal rubric
+Bands are:
+`absent | weak | adequate | strong | exceptional | insufficient_evidence`
 
-Read [references/evaluation-rubric.md](references/evaluation-rubric.md). Score all 18 dimensions from 0–10 using the defined weights for shortlisted candidates under Standard/Deep evaluation.
+For every scored band attach:
+- repository-relative evidence path;
+- quote, line range, or concrete observation;
+- concise reasoning.
 
-Use integer or half-point dimension scores; report the normalized overall score as an integer unless precision is genuinely useful.
+Use `insufficient_evidence` instead of inventing confidence. Abstained dimensions drop from the weighted total; report coverage.
 
-If scripts are absent or irrelevant, score **Code/script quality** based on whether omitting scripts is appropriate rather than penalizing absence mechanically.
-
-For deterministic arithmetic, save scores to JSON and run:
+When a local/materialized checkout exists, save the evaluation record as JSON and run:
 
 ```bash
-python3 scripts/score_skill.py scores.json
+python3 scripts/score_skill.py evaluation.json
 ```
 
-### 7. Apply the relevant domain overlay
+The script validates evidence paths/quotes, band legality, coverage, counter-case structure, probe gating, confidence caps, tier caps, rubric version, and arithmetic. The script never decides whether a judgment is substantively good.
 
-Read [references/domain-overlays.md](references/domain-overlays.md) only for the relevant domain. Use the overlay to interpret universal dimensions and expose domain-specific failure modes; do not create a second arbitrary total unless the user explicitly requests one.
+Always record the judge model because judgments are model-relative.
 
-### 8. Estimate frontier-model baseline and uplift
+### 6. Apply the relevant domain/runtime overlay
 
-Ask:
+Read [references/domain-overlays.md](references/domain-overlays.md) only for relevant sections.
 
-> What concrete capability, procedure, constraint, tool, or specialist knowledge does this skill add beyond what a strong current frontier model would reliably do from the user's task alone?
+For Claude Code-targeted skills, inspect activation/runtime specifics such as `.claude/skills`, invocation controls, tool permissions, subagent context, plugin packaging, portable paths, and CLAUDE.md interaction.
 
-Classify uplift:
-- **Transformative** — enables a workflow or reliability level otherwise difficult to achieve.
-- **High** — materially improves consistency, correctness, or efficiency across repeated use.
-- **Moderate** — useful repeatable improvement with bounded benefit.
-- **Low** — mostly convenience, reminders, or modest structure.
-- **Negligible** — generic behavior already reliable in the baseline model.
+### 7. Probe capability uplift when warranted
 
-Do not infer uplift from skill length or author claims alone.
+Do not estimate `strong`/`exceptional` uplift by introspection.
 
-### 9. Detect red flags and caps
+- `adequate` or lower may be **Inferred** from concrete procedure/knowledge/tooling.
+- `strong` requires at least one recorded same-task with-skill vs same-model baseline probe, judged blind when feasible.
+- `exceptional` requires at least three runs/cases and should remain rare.
 
-Read [references/red-flags.md](references/red-flags.md). Report material red flags explicitly.
+A one-run probe is directional evidence, not a benchmark.
 
-Apply quality caps when warranted:
-- critical unsafe/destructive behavior without safeguards: maximum `D` unless the dangerous behavior is the explicit domain and properly controlled;
-- malicious, deceptive, plagiarized-with-unclear-provenance, or functionally broken: `F`;
-- required private/unavailable dependencies are undocumented: maximum `C` for general reusability;
-- no clear reuse license: flag legal reuse uncertainty; when the user explicitly requires open source, do not present it as fully reusable open source.
+### 8. Mandatory falsification pass
 
-### 10. Fit-for-purpose
+Every Standard/Deep evaluation must include a `counter_case`:
 
-When a use case is supplied, separately score `Fit for This Use Case: 0–100` based on:
+- strongest honest argument that the skill is worse/less useful than scored;
+- dimensions at risk;
+- a concrete observation that would change the verdict.
+
+If you cannot articulate a serious counter-case, the evaluation is probably one-sided.
+
+### 9. Fit for purpose
+
+When a use case exists, separately score fit based on:
 - problem match;
-- stack/tool compatibility;
+- agent/tool/stack compatibility;
 - workflow match;
 - unique capability contribution;
-- integration cost;
+- integration/context cost;
 - constraints/conflicts;
 - expected uplift for this use case.
 
-A high-quality skill may have low fit. Do not let fit alter intrinsic quality.
+A strong skill can have low fit. Do not alter intrinsic quality because fit is low.
 
-### 11. Compare and rank
+### 10. Compare and rank
 
-For multiple candidates:
-1. triage the broad pool before expensive full scoring;
-2. finish each shortlisted candidate's independent evaluation before ranking;
-3. compare score, promise fulfillment, evidence, uplift, risks, and fit;
-4. explain why the winner beats the runner-up;
-5. avoid unsupported microscopic score differences;
-6. identify when the result is within uncertainty.
+Finish independent Standard evaluations before ranking.
 
-As a default, treat gaps under ~3 points as a near-tie unless there is a decisive qualitative difference. With Low confidence, even larger gaps may be non-decisive.
+Use:
+- promise fulfillment;
+- evidence-bound bands;
+- coverage/confidence;
+- fit;
+- observed/inferred uplift;
+- safety/reuse risk;
+- decisive qualitative differences.
 
-For stacks, do not simply choose the top two. Use:
+Do not let 1–3 score points decide a ranking by themselves. Treat close results as near-ties unless evidence identifies a decisive advantage.
+
+For skill stacks use:
 
 `Combined Value = Complementarity + Unique Capability - Redundancy - Instruction Conflict - Context Cost`
 
-Report each skill's responsibility, overlap, conflicts, and activation order when relevant.
+Do not simply choose the top two individual scores.
 
-### 12. Adversarial calibration
+### 11. Adversarial calibration
 
-Before finalizing, verify:
-- Did I search more than one query family when discovery was required?
-- Did search ranking, stars, README polish, or repository size bias the shortlist?
-- Did I deduplicate forks/copies and check license/reuse status?
-- Did I inspect the actual `SKILL.md` and material references?
-- Did I extract the core promises and map them to evidence?
-- Am I calling an author claim “verified” without reproduction or adequate tests?
-- Do tests/evals actually measure the promised outcome?
-- Am I mistaking complexity for sophistication?
-- Am I penalizing justified specialization?
-- Am I rewarding generic advice a frontier model already knows?
-- Did I compare shortlisted candidates at comparable depth?
-- Am I accidentally scoring repository-wide polish instead of the named skill?
-- Are score differences supported by evidence?
-- Could a less popular candidate be better?
-- Did I keep intrinsic quality, fit, and promise fulfillment distinct?
+Before finalizing, check:
+- Did popularity/search order influence me?
+- Did I score anything without inspected evidence?
+- Did I mistake README claims or the existence of eval files for effectiveness?
+- Did I give uplift above `adequate` without a baseline probe?
+- Did I penalize justified specialization?
+- Did I evaluate the named skill rather than sibling repository polish?
+- Did I compare candidates at similar decision-relevant depth?
+- Is the score coverage high enough to be meaningful?
+- Is the counter-case substantive?
+- Are score differences actually decision-relevant?
 
-Correct the shortlist, scores, or ranking if this review exposes bias.
+Correct the result if needed.
 
 ## Output
 
-Use [references/output-format.md](references/output-format.md). Be concise by default, but show enough evidence to make the decision auditable.
+Read [references/output-format.md](references/output-format.md).
 
-For a single skill include:
-- intrinsic score and tier;
-- fit score when a use case exists;
-- **promise fulfillment** for core claims;
-- capability uplift;
-- confidence and evidence strength;
-- strongest advantages;
-- weaknesses/red flags;
-- recommendation.
+Lead with:
+- promise fulfillment;
+- recommendation;
+- confidence;
+- coverage;
+- capability uplift (`Probed` or `Inferred`);
+- only then the secondary intrinsic score/tier;
+- rubric version and judge model.
 
-For discovery/rankings, start with the shortlist/ranking table, then explain decisive differences, promise evidence, and stack compatibility.
-
-## Confidence
-
-Use:
-- **High**: deep repository inspection plus reproduced tests/evals or strong independently checkable evidence; no major inaccessible components.
-- **Medium**: source inspected well and repository evidence is meaningful, but effectiveness or core promises were not fully reproduced.
-- **Low**: limited repository access, missing source, inaccessible dependencies, or conclusions rely heavily on claims/inference.
-
-Confidence describes certainty in the evaluation, not intrinsic quality. Never convert lack of evidence into a claim of poor quality without explaining the distinction.
+For comparisons, start with the ranking table, then explain decisive evidence, uncertainty, redundancy/conflicts, and stack compatibility.
