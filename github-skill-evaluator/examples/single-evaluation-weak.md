@@ -7,9 +7,9 @@ Fictional example; not benchmark evidence.
 **Promise fulfillment:** Unproven
 **Recommendation:** Skip
 **Confidence:** Medium
-**Coverage:** 85%
+**Coverage:** 90%
 **Capability uplift:** Weak — Inferred
-**Intrinsic score:** 52/100 — D *(secondary summary)*
+**Intrinsic score:** 36/100 — F *(secondary summary)*
 **Rubric:** 2026-09-v2
 **Judge model:** example-model
 
@@ -29,6 +29,8 @@ The repository is polished, but most behavioral guidance is generic and its head
 | Reusability & composability | adequate | portable format, limited integration guidance |
 | Context efficiency | weak | large monolithic SKILL.md with duplicated prose |
 | Maintainability & docs | strong | clear install docs and license |
+
+The 36/100 secondary score is the deterministic result of the bands above after the 10% Evidence-of-effectiveness weight abstains and the remaining 90% renormalizes.
 
 ### Counter-case
 
