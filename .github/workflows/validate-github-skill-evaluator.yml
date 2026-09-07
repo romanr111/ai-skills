@@ -1,0 +1,28 @@
+name: Validate GitHub Skill Evaluator
+
+on:
+  pull_request:
+    paths:
+      - "github-skill-evaluator/**"
+      - ".github/workflows/validate-github-skill-evaluator.yml"
+  push:
+    branches: [main]
+    paths:
+      - "github-skill-evaluator/**"
+      - ".github/workflows/validate-github-skill-evaluator.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate package
+        run: python3 github-skill-evaluator/scripts/validate_package.py github-skill-evaluator
+      - name: Run deterministic scorer tests
+        run: python3 -m unittest github-skill-evaluator/tests/test_score_skill.py
