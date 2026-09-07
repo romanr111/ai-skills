@@ -88,6 +88,45 @@
         "call the result a near-tie or explain that ranking uncertainty is material",
         "prefer decision-relevant qualitative differences over pseudo-precision"
       ]
+    },
+    {
+      "id": 9,
+      "prompt": "Find and rank the best open-source GitHub Agent Skills for visual QA of websites. No repository URLs are supplied.",
+      "expected_output": "A discovery-first evaluation that finds a diverse candidate pool and deeply evaluates a shortlist.",
+      "files": [],
+      "expectations": [
+        "use multiple search query families and domain synonyms instead of one search",
+        "triage a broader pool before fully scoring a shortlist",
+        "deduplicate forks, mirrors, or copies where identifiable",
+        "check license/reuse status for open-source eligibility",
+        "not rank primarily by stars or search-result order",
+        "include credible lower-popularity candidates when available"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Evaluate a skill whose README claims it makes coding agents 2x faster and 30% more accurate, but provides no benchmark method, baseline, dataset, repetitions, or reproducible results. The workflow itself appears well designed.",
+      "expected_output": "An evaluation that separates intrinsic implementation quality from unsupported outcome claims.",
+      "files": [],
+      "expectations": [
+        "classify the numerical performance claims as unproven",
+        "not treat README repetition or popularity as proof",
+        "retain potentially strong intrinsic quality if the implementation warrants it",
+        "lower evidence strength and confidence in promise fulfillment",
+        "explain what benchmark evidence would be required to verify the claims"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "A skill claims production-grade code review. Its eval suite only checks that the final response contains headings and bullet points; it never measures defect detection, false positives, task alignment, or severity calibration.",
+      "expected_output": "An evaluation that checks whether the evals measure the promised outcome rather than merely existing.",
+      "files": [],
+      "expectations": [
+        "identify mismatch between the claimed capability and the eval assertions",
+        "avoid counting presence of eval files as strong effectiveness evidence",
+        "mark production-grade review quality as unproven unless other evidence supports it",
+        "recommend representative defect-seeded and false-positive-control evaluation"
+      ]
     }
   ]
 }
