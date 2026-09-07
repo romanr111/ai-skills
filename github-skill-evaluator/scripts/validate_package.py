@@ -24,6 +24,7 @@ REQUIRED = [
     "references/installation.md",
     "scripts/score_skill.py",
     "scripts/repo_inventory.py",
+    "tests/test_score_skill.py",
     "evals/evals.json",
     "evals/trigger-cases.json",
 ]
@@ -91,6 +92,8 @@ def validate(root: Path) -> list[str]:
         for band in BANDS:
             if f'"{band}"' not in score_text: errors.append(f"score_skill.py missing band {band}")
         if 'ABSTAIN = "insufficient_evidence"' not in score_text: errors.append("score_skill.py must support insufficient_evidence abstention")
+        for probe_field in ("probe_root", "with_skill_output", "baseline_output", "execution_model", "same_model_environment", "judged_blind"):
+            if probe_field not in score_text: errors.append(f"score_skill.py missing uplift probe field {probe_field}")
 
     rubric = root / "references/evaluation-rubric.md"
     if rubric.is_file():
