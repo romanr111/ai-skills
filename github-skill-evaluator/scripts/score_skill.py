@@ -116,20 +116,48 @@ def _validate_evidence_item(root: Path, dimension: str, item: dict) -> None:
             raise ValueError(f"{dimension}: line range {lines} outside {path} ({line_count} lines)")
 
 
+def _resolve_probe_artifact(root: Path, rel: str, label: str) -> Path:
+    if not isinstance(rel, str) or not rel.strip() or Path(rel).is_absolute():
+        raise ValueError(f"uplift_probe.{label} must be a non-empty relative path")
+    candidate = (root / rel).resolve()
+    try:
+        candidate.relative_to(root)
+    except ValueError as exc:
+        raise ValueError(f"uplift_probe.{label} escapes probe_root: {rel}") from exc
+    if not candidate.exists():
+        raise ValueError(f"uplift_probe.{label} does not exist: {rel}")
+    return candidate
+
+
 def _validate_probe(payload: dict, uplift_band: str) -> str:
     probe = payload.get("uplift_probe")
-    if uplift_band not in {"strong", "exceptional"}:
-        return "Probed" if isinstance(probe, dict) else "Inferred"
-
+    probe_required = uplift_band in {"strong", "exceptional"}
     if not isinstance(probe, dict):
-        raise ValueError("capability_uplift strong/exceptional requires uplift_probe")
+        if probe_required:
+            raise ValueError("capability_uplift strong/exceptional requires uplift_probe")
+        return "Inferred"
 
-    required = ["task", "with_skill_output", "baseline_output", "judge_verdict"]
-    for key in required:
+    probe_root_value = probe.get("probe_root")
+    if not isinstance(probe_root_value, str) or not probe_root_value.strip():
+        raise ValueError("uplift_probe.probe_root is required when a probe is supplied")
+    probe_root = Path(probe_root_value).resolve()
+    if not probe_root.is_dir():
+        raise ValueError(f"uplift_probe.probe_root is not a directory: {probe_root}")
+
+    for key in ("task", "judge_verdict", "execution_model"):
         if not isinstance(probe.get(key), str) or not probe[key].strip():
             raise ValueError(f"uplift_probe.{key} is required")
+
+    with_output = _resolve_probe_artifact(probe_root, probe.get("with_skill_output"), "with_skill_output")
+    baseline_output = _resolve_probe_artifact(probe_root, probe.get("baseline_output"), "baseline_output")
+    if with_output == baseline_output:
+        raise ValueError("uplift_probe with-skill and baseline outputs must be different artifacts")
+
+    if probe.get("same_model_environment") is not True:
+        raise ValueError("uplift_probe.same_model_environment must be true")
     if probe.get("judged_blind") is not True:
-        raise ValueError("uplift_probe.judged_blind must be true for strong/exceptional uplift")
+        raise ValueError("uplift_probe.judged_blind must be true")
+
     runs = probe.get("runs")
     if not isinstance(runs, int) or runs < 1:
         raise ValueError("uplift_probe.runs must be an integer >= 1")
