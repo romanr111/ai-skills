@@ -1,26 +1,39 @@
-# Example: Popular but weak skill
+# Example: polished but weakly evidenced skill
 
-This is an illustrative fictional example.
-
-## Input
-
-Evaluate `popular-dev/ultimate-clean-code-skill`, a repository with 18k GitHub stars.
+Fictional example; not benchmark evidence.
 
 ## Verdict
 
-**Intrinsic Quality:** 52/100 — D  
-**Capability Uplift:** Low  
-**Evidence Strength:** Weak  
-**Confidence:** High  
+**Promise fulfillment:** Unproven
 **Recommendation:** Skip
+**Confidence:** Medium
+**Coverage:** 85%
+**Capability uplift:** Weak — Inferred
+**Intrinsic score:** 52/100 — D *(secondary summary)*
+**Rubric:** 2026-09-v2
+**Judge model:** example-model
 
-The repository is polished and popular, but most instructions restate generic software-engineering principles. It lacks a concrete review procedure, failure taxonomy, verification loop, and evidence that installing the skill improves a strong model's output.
+The repository is polished, but most behavioral guidance is generic and its headline quality claims are unsupported by representative tests or baseline comparisons.
 
-### Decisive evidence
-- `SKILL.md` repeatedly says to use SOLID, clean naming, tests, and best practices without decision rules.
-- No eval suite or before/after comparison was found.
-- Examples show only successful greenfield code and do not exercise trade-offs or failure cases.
-- GitHub popularity is recorded under Community evidence only and contributes little to the total.
+### Evidence-bound rubric
 
-### Capability uplift
-Low: a strong model already follows most of the instructions reliably. The skill provides reminders rather than unique procedures or knowledge.
+| Dimension | Band | Evidence |
+|---|---|---|
+| Activation & scope | adequate | broad but usable description |
+| Instruction & workflow | weak | generic checklist with little branching |
+| Domain expertise | weak | mostly common best practices |
+| Verification | weak | self-review language without observable acceptance criteria |
+| Capability uplift | weak | no unique procedure/tooling beyond baseline behavior |
+| Evidence of effectiveness | insufficient_evidence | screenshots and README claims only |
+| Safety | adequate | no destructive behavior, but safeguards are sparse |
+| Reusability & composability | adequate | portable format, limited integration guidance |
+| Context efficiency | weak | large monolithic SKILL.md with duplicated prose |
+| Maintainability & docs | strong | clear install docs and license |
+
+### Counter-case
+
+**Strongest argument this is underrated:** even generic reminders can improve consistency for weaker models or inexperienced users.
+
+**Dimensions at risk:** Capability uplift, Instruction & workflow.
+
+**What would change my mind:** a same-model baseline probe showing materially better task outcomes with the skill enabled.

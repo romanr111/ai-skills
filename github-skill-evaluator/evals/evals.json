@@ -1,132 +1,21 @@
 {
   "skill_name": "github-skill-evaluator",
+  "rubric_version": "2026-09-v2",
+  "note": "Behavioral cases are definitions; do not claim pass status until executed by a model runner.",
   "evals": [
-    {
-      "id": 1,
-      "prompt": "Compare Skill A (20 stars, strong tests/evals and domain-specific workflow) with Skill B (20,000 stars, generic best-practice instructions, no evals).",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "score intrinsic quality independently of star count",
-        "allow Skill A to outrank Skill B",
-        "treat popularity only as weak community evidence",
-        "explain capability uplift relative to a frontier-model baseline"
-      ]
-    },
-    {
-      "id": 2,
-      "prompt": "Evaluate an excellent React visual-design skill for a Python backend architecture review.",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "keep intrinsic quality high if warranted",
-        "assign low fit for the backend architecture use case",
-        "not lower intrinsic quality merely because fit is low"
-      ]
-    },
-    {
-      "id": 3,
-      "prompt": "Evaluate a well-written skill whose source is available but which has no evals or external usage evidence.",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "distinguish lack of effectiveness evidence from evidence of poor quality",
-        "lower Evidence of effectiveness and confidence as appropriate",
-        "avoid claiming the skill is ineffective without support"
-      ]
-    },
-    {
-      "id": 4,
-      "prompt": "Evaluate a deployment skill that runs destructive production commands by default with no confirmation or rollback.",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "identify a severe safety red flag",
-        "cap the quality tier at D or worse despite otherwise strong scores",
-        "explain the cap"
-      ]
-    },
-    {
-      "id": 5,
-      "prompt": "Choose the best stack from a design-generation skill, a visual-QA skill, and a second overlapping design-generation skill.",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "analyze complementarity rather than selecting the two highest raw scores",
-        "prefer distinct responsibilities when quality is adequate",
-        "report overlap, conflicts, context cost, and activation order"
-      ]
-    },
-    {
-      "id": 6,
-      "prompt": "Evaluate a narrowly scoped PostgreSQL migration skill that explicitly targets PostgreSQL and is excellent at that job.",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "not penalize justified specialization as poor reusability by itself",
-        "penalize only hidden or unnecessary coupling"
-      ]
-    },
-    {
-      "id": 7,
-      "prompt": "Evaluate only skill X inside a repository that also contains several excellent unrelated skills.",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "define skill X as the evaluation unit",
-        "use repository-wide health/license only as supporting context",
-        "not inflate skill X's expertise or workflow scores from sibling skills"
-      ]
-    },
-    {
-      "id": 8,
-      "prompt": "Two candidates score approximately 87 and 89 with Medium confidence and no decisive qualitative difference.",
-      "expected_output": "An evaluation that satisfies all listed expectations while following the github-skill-evaluator rubric.",
-      "files": [],
-      "expectations": [
-        "avoid presenting the two-point gap as definitive",
-        "call the result a near-tie or explain that ranking uncertainty is material",
-        "prefer decision-relevant qualitative differences over pseudo-precision"
-      ]
-    },
-    {
-      "id": 9,
-      "prompt": "Find and rank the best open-source GitHub Agent Skills for visual QA of websites. No repository URLs are supplied.",
-      "expected_output": "A discovery-first evaluation that finds a diverse candidate pool and deeply evaluates a shortlist.",
-      "files": [],
-      "expectations": [
-        "use multiple search query families and domain synonyms instead of one search",
-        "triage a broader pool before fully scoring a shortlist",
-        "deduplicate forks, mirrors, or copies where identifiable",
-        "check license/reuse status for open-source eligibility",
-        "not rank primarily by stars or search-result order",
-        "include credible lower-popularity candidates when available"
-      ]
-    },
-    {
-      "id": 10,
-      "prompt": "Evaluate a skill whose README claims it makes coding agents 2x faster and 30% more accurate, but provides no benchmark method, baseline, dataset, repetitions, or reproducible results. The workflow itself appears well designed.",
-      "expected_output": "An evaluation that separates intrinsic implementation quality from unsupported outcome claims.",
-      "files": [],
-      "expectations": [
-        "classify the numerical performance claims as unproven",
-        "not treat README repetition or popularity as proof",
-        "retain potentially strong intrinsic quality if the implementation warrants it",
-        "lower evidence strength and confidence in promise fulfillment",
-        "explain what benchmark evidence would be required to verify the claims"
-      ]
-    },
-    {
-      "id": 11,
-      "prompt": "A skill claims production-grade code review. Its eval suite only checks that the final response contains headings and bullet points; it never measures defect detection, false positives, task alignment, or severity calibration.",
-      "expected_output": "An evaluation that checks whether the evals measure the promised outcome rather than merely existing.",
-      "files": [],
-      "expectations": [
-        "identify mismatch between the claimed capability and the eval assertions",
-        "avoid counting presence of eval files as strong effectiveness evidence",
-        "mark production-grade review quality as unproven unless other evidence supports it",
-        "recommend representative defect-seeded and false-positive-control evaluation"
-      ]
-    }
+    {"id": 1, "prompt": "Compare Skill A (20 stars, strong tests/evals and domain-specific workflow) with Skill B (20,000 stars, generic best-practice instructions, no evals).", "assertions": ["A may outrank B", "popularity is weak secondary evidence", "claims and capability uplift are evidence-bound"]},
+    {"id": 2, "prompt": "Evaluate an excellent React visual-design skill for a Python backend architecture review.", "assertions": ["intrinsic quality and fit are separate", "low fit does not erase intrinsic quality"]},
+    {"id": 3, "prompt": "Evaluate a well-written skill whose source is available but which has no evals or external usage evidence.", "assertions": ["uses insufficient_evidence where appropriate", "coverage is reported", "does not equate missing evidence with ineffectiveness"]},
+    {"id": 4, "prompt": "Evaluate a deployment skill that runs destructive production commands by default with no confirmation or rollback.", "assertions": ["severe safety red flag identified", "tier cap D or worse applied and explained"]},
+    {"id": 5, "prompt": "Choose the best stack from a design-generation skill, a visual-QA skill, and a second overlapping design-generation skill.", "assertions": ["complementarity beats raw score stacking", "overlap/conflicts/context cost reported"]},
+    {"id": 6, "prompt": "Evaluate a narrowly scoped PostgreSQL migration skill that explicitly targets PostgreSQL and is excellent at that job.", "assertions": ["specialization is not penalized by itself", "hidden/unnecessary coupling is distinguished"]},
+    {"id": 7, "prompt": "Evaluate only skill X inside a repository that also contains several excellent unrelated skills.", "assertions": ["skill X is the evaluation unit", "sibling quality does not inflate scored bands"]},
+    {"id": 8, "prompt": "Two candidates have similar secondary scores and Medium confidence with no decisive qualitative difference.", "assertions": ["ranking is called a near-tie or uncertainty is explicit", "tiny arithmetic gaps do not decide the winner"]},
+    {"id": 9, "prompt": "Find and rank the best open-source GitHub Agent Skills for visual QA of websites. No repository URLs are supplied.", "assertions": ["multiple search families used", "broad pool triaged before scoring shortlist", "licenses checked", "lower-popularity candidates considered"]},
+    {"id": 10, "prompt": "A README claims 2x faster and 30% more accurate with no method, baseline, repetitions, or reproducible results.", "assertions": ["numerical claims labeled unproven", "intrinsic quality can remain strong if evidence supports it", "required proof is explained"]},
+    {"id": 11, "prompt": "A code-review skill claims production-grade quality but its evals only assert headings and bullet points.", "assertions": ["eval/claim mismatch identified", "existence of eval files is not treated as effectiveness evidence"]},
+    {"id": 12, "prompt": "The evaluator wants to assign strong capability uplift based only on reading SKILL.md; no baseline run exists.", "assertions": ["strong uplift is rejected or capped at adequate", "uplift labeled Inferred without probe"]},
+    {"id": 13, "prompt": "A candidate has evidence for only 6 of 10 dimensions.", "assertions": ["unsupported dimensions abstain", "remaining weights renormalize", "coverage and confidence cap are reported"]},
+    {"id": 14, "prompt": "A candidate appears excellent. Provide the final evaluation.", "assertions": ["counter-case contains strongest honest downside", "states an observable condition that would change the verdict"]}
   ]
 }

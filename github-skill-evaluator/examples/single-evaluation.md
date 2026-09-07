@@ -1,43 +1,39 @@
-# Example: Single-skill evaluation
+# Example: strong skill with incomplete effectiveness evidence
 
-This is an illustrative fictional example. Scores are not claims about a real repository.
-
-## Input
-
-Evaluate `acme-labs/visual-regression-skill` for production frontend visual QA.
+Fictional example showing the output shape; it is not benchmark evidence.
 
 ## Verdict
 
-**Intrinsic Quality:** 86/100 — A  
-**Fit for This Use Case:** 94/100  
-**Capability Uplift:** High  
-**Evidence Strength:** Moderate  
-**Confidence:** Medium  
+**Promise fulfillment:** Supported
 **Recommendation:** Install
+**Confidence:** Medium
+**Coverage:** 90%
+**Capability uplift:** Adequate — Inferred
+**Intrinsic score:** 79/100 — B *(secondary summary)*
+**Rubric:** 2026-09-v2
+**Judge model:** example-model
 
-The skill adds a concrete capture → compare → classify → fix → recapture loop across defined responsive viewports, with deterministic screenshot tooling and acceptance criteria. Its main weakness is limited evidence that the workflow reduces escaped visual defects across multiple real projects.
+The skill has a strong operational workflow, clear activation boundaries, and concrete verification loops. Its main limitation is empirical: no matched baseline probe or representative repeated eval demonstrates incremental model uplift, so uplift remains Inferred rather than Probed.
 
-### Score breakdown (abridged)
+### Evidence-bound rubric
 
-| Dimension | Score | Key evidence |
-|---|---:|---|
-| Domain expertise | 9/10 | Defines viewport/state matrix and distinguishes structural from pixel variance. |
-| Workflow design | 9/10 | Explicit iterative visual regression loop with stop conditions. |
-| Verification | 10/10 | Requires recapture and comparison after every material fix. |
-| Reusability | 8/10 | Framework-neutral; browser dependency is documented. |
-| Evidence effectiveness | 6/10 | Reproducible examples and tests, but no independent benchmark. |
-| Capability uplift | 9/10 | Adds deterministic workflow and criteria beyond generic "check the UI" advice. |
+| Dimension | Band | Evidence |
+|---|---|---|
+| Activation & scope | strong | `SKILL.md:12-30` explicit trigger/non-goals |
+| Instruction & workflow | strong | `SKILL.md:34-91` staged procedure |
+| Domain expertise | strong | `references/method.md:10-55` specialist failure modes |
+| Verification | strong | `SKILL.md:96-120` fix/recheck loop |
+| Capability uplift | adequate | no baseline probe; inferred from concrete workflow |
+| Evidence of effectiveness | insufficient_evidence | no representative comparative eval found |
+| Safety | strong | `SKILL.md:124-145` scoped non-destructive behavior |
+| Reusability & composability | strong | portable paths and explicit dependencies |
+| Context efficiency | strong | compact SKILL.md + on-demand references |
+| Maintainability & docs | strong | clear installation/license/version notes |
 
-### Strongest advantages
-- Objective visual verification instead of subjective self-review.
-- Clear ownership boundary: validates visuals; does not redesign them.
-- Good progressive disclosure for browser/tool details.
+### Counter-case
 
-### Weaknesses / red flags
-- Author claims production use but provides no measured before/after defect data.
-- Screenshot threshold defaults may need calibration per project.
+**Strongest argument this is overrated:** a current frontier model may already perform most of the workflow when directly prompted, so the skill may mainly improve consistency rather than capability.
 
-### Evidence quality
-**Verified:** skill instructions, scripts, example fixtures, test commands.  
-**Author claim:** production adoption.  
-**Insufficient evidence:** cross-project defect reduction.
+**Dimensions at risk:** Capability uplift, Instruction & workflow.
+
+**What would change my mind:** a matched blind baseline probe showing equivalent outputs across several representative tasks.

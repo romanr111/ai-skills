@@ -16,7 +16,8 @@ Use only the relevant section(s). These overlays refine interpretation of the un
 10. Writing / communication
 11. Data analysis
 12. Business workflows
-13. Unknown/new domains
+13. Agent-skill runtime / Claude Code
+14. Unknown/new domains
 
 ## 1. Software architecture
 
@@ -187,7 +188,23 @@ Inspect:
 
 Red flags: vague "AI automation" claims, no process ownership, no exception path, no measurable success definition.
 
-## 13. Unknown/new domains
+## 13. Agent-skill runtime / Claude Code
+
+When Claude Code support is part of the promise or target use case, inspect:
+- activation description quality and realistic over/under-trigger risk;
+- project `.claude/skills/` versus personal `~/.claude/skills/` placement and intended sharing scope;
+- invocation controls such as `disable-model-invocation` when automatic activation would be unsafe or noisy;
+- `context: fork` only when isolated subagent execution fits an actionable task;
+- `allowed-tools` / permission scoping for tool-using or externally impactful workflows;
+- `${CLAUDE_SKILL_DIR}` or equivalent portable paths instead of fragile current-directory assumptions;
+- plugin packaging under a plugin `skills/` directory when distribution is claimed;
+- interaction with `CLAUDE.md`: CLAUDE.md is always-on context while skill bodies load on demand, so avoid duplicated large instructions;
+- progressive disclosure because loaded skill content remains in context after invocation;
+- trigger tests containing both should-trigger cases and adjacent near-miss should-not-trigger cases.
+
+Do not penalize a purely portable Agent Skills implementation for omitting Claude-specific extensions it does not claim to support.
+
+## 14. Unknown/new domains
 
 Derive a lightweight overlay by asking:
 1. What expert failure modes are common in this domain?

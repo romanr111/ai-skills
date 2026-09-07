@@ -1,158 +1,119 @@
 # Promise-to-Proof Validation
 
-Use this protocol to answer the central question:
+Use this protocol to answer:
 
 > Does the skill have credible evidence that it can deliver what it promises?
 
-Do not treat implementation quality and promise validation as the same thing. A well-designed skill can have unproven outcome claims; a modest skill can accurately deliver a narrow promise.
+Do not conflate implementation quality with promise validation. A strong implementation can still make unproven outcome claims.
 
-## 1. Extract material promises
+## Extract material promises
 
-After inspecting implementation, collect only decision-relevant claims from the repository's README, skill description, examples, docs, benchmarks, releases, or maintainer statements.
+After implementation inspection, collect only decision-relevant claims from README, skill description, docs, examples, benchmarks, releases, or maintainer statements.
 
-Classify each claim as one of:
-- **Capability** — “can perform X”, “supports Y workflow”.
-- **Quality/reliability** — “production-ready”, “high-confidence”, “self-correcting”.
-- **Outcome/benchmark** — “reduces defects”, “2× faster”, “improves conversion/design quality”.
-- **Compatibility** — works with specific agents, stacks, operating systems, tools, or versions.
-- **Portability/reuse** — reusable across projects/providers/environments.
-- **Safety** — non-destructive, sandboxed, privacy-preserving, approval-gated.
+Classify:
+- **Capability** — can perform X / supports Y workflow
+- **Quality/reliability** — production-ready, high-confidence, self-correcting
+- **Outcome/benchmark** — faster, more accurate, fewer defects, better quality
+- **Compatibility** — agents, stacks, OSes, tools, versions
+- **Portability/reuse** — cross-project/provider/environment reuse
+- **Safety** — non-destructive, sandboxed, approval-gated
 
-Ignore purely promotional adjectives unless they imply a testable capability.
-
-## 2. Build a promise-to-proof matrix
-
-Maintain a compact matrix for the material claims:
+## Promise-to-proof matrix
 
 | Promise | Importance | Proof required | Evidence found | Status | Limitation |
 |---|---|---|---|---|---|
-| Generates responsive UI | Core | workflow + realistic execution/example | skill + example | Supported | example not independently rerun |
-| 2× faster than baseline | Core | controlled benchmark with defined baseline | README only | Unproven | no benchmark methodology |
-| Works on Windows | Secondary | portable implementation or Windows test | POSIX shell script | Contradicted/unsupported | no Windows path |
 
 Prioritize **core promises**: if false, the reason to install the skill disappears.
 
-## 3. Status labels
+Statuses:
+- **Verified** — independently executed/reproduced/confirmed against the claim
+- **Supported** — implementation/tests strongly support it, not independently reproduced
+- **Plausible** — consistent implementation, incomplete evidence
+- **Unproven** — material claim lacks adequate evidence
+- **Contradicted** — available evidence conflicts with the claim
+- **Not testable here** — required environment/dependency is unavailable
 
-Use these labels precisely:
+Repeated author claims do not upgrade evidence.
 
-- **Verified** — directly executed, reproduced, or independently confirmed in a way that tests the claim.
-- **Supported** — repository implementation/tests strongly support the claim, but the evaluator did not independently reproduce it.
-- **Plausible** — implementation is consistent with the claim, but evidence is incomplete.
-- **Unproven** — claim is material but no adequate evidence was found.
-- **Contradicted** — available evidence conflicts with the claim.
-- **Not testable here** — claim requires an unavailable environment, account, proprietary dependency, hardware, or external condition.
+## Validation ladder
 
-Repeated author statements do not upgrade a claim from `Unproven` to `Supported`.
+Use the cheapest safe level that can change the decision.
 
-## 4. Validation ladder
-
-Use the cheapest reliable level that can resolve the decision. Do not execute untrusted code merely to increase confidence.
-
-### Level 0 — Static claim/implementation match
-
-Check whether the promised behavior actually appears in:
-- `SKILL.md` workflow;
-- referenced procedures;
-- scripts/configuration;
-- expected outputs;
-- constraints and tool integrations.
-
-If a core promise has no implementation path, treat that as strong negative evidence.
+### Level 0 — Static implementation match
+Check whether the promised behavior exists in the actual workflow, references, scripts, config, outputs, and constraints.
 
 ### Level 1 — Test/eval inspection
-
-Inspect tests/evals for:
-- whether they exercise the promised capability rather than trivial parsing/formatting;
-- realistic inputs and failure cases;
-- meaningful assertions;
-- baseline/comparator when improvement is claimed;
-- cherry-picking or leakage;
-- whether examples are generated fixtures presented as independent evidence.
-
-Presence of an `evals/` directory is not itself effectiveness evidence.
+Check whether tests measure the promised behavior rather than presence of headings, files, or implementation details.
 
 ### Level 2 — Deterministic reproduction
-
-When safe and feasible, run repository-provided validation in an isolated/local environment.
-
-Record:
-- command/environment;
-- result;
-- failures/skips;
-- whether the test actually maps to the claim.
-
-Do not run scripts that request secrets, broad filesystem access, production credentials, remote mutation, or suspicious install hooks without explicit justification and safeguards.
+When safe and feasible, run repository-provided validation in an isolated/local environment. Record command, environment, result, failures/skips, and claim mapping.
 
 ### Level 3 — Representative smoke task
+Run a small task that matches the job-to-be-done with observable acceptance criteria.
 
-When the skill's output can be evaluated safely, run a small representative task that matches the claimed job-to-be-done.
+### Level 4 — Capability-uplift probe
+Use this when evaluating incremental value over a frontier-model baseline.
 
-Judge against observable acceptance criteria, not subjective “looks good” language.
+Run the **same representative task** with:
+1. the skill enabled;
+2. the same model/tool environment without the skill.
 
-Examples:
-- code review → seeded defects and false-positive control;
-- visual QA → known screenshot/layout differences across viewports;
-- research → known source-quality/freshness traps;
-- data analysis → known schema/statistical failure cases.
+Judge outputs blind when feasible and record:
 
-### Level 4 — Baseline or competitor A/B
+```json
+{
+  "uplift_probe": {
+    "task": "representative task",
+    "with_skill_output": "path-or-reference",
+    "baseline_output": "path-or-reference",
+    "judged_blind": true,
+    "judge_verdict": "with-skill materially better on X; equal on Y",
+    "runs": 1
+  }
+}
+```
 
-Use when the repository claims meaningful uplift or when top candidates are close.
-
-Compare:
-- same task/input;
-- same model/tool environment where possible;
-- skill enabled versus baseline without the skill, or versus a competing skill;
-- predefined success criteria;
-- multiple cases when stochastic model behavior matters.
-
-Do not claim causal uplift from one cherry-picked demonstration.
+Rules:
+- `strong` capability uplift requires at least one recorded probe.
+- `exceptional` requires at least three runs/cases and should remain rare.
+- one probe is directional evidence, not a benchmark.
+- without a probe, uplift cannot exceed `adequate` and must be labeled **Inferred**.
 
 ### Level 5 — Adversarial/failure-case validation
+For high-risk or high-confidence claims, test ambiguous input, missing dependencies, unsafe edges, contradictions, and domain-specific traps.
 
-For high-risk or high-confidence claims, test likely failure modes:
-- ambiguous input;
-- missing dependency/tool;
-- unsafe/destructive edge cases;
-- contradictory instructions;
-- domain-specific traps;
-- out-of-distribution cases.
+## Numerical benchmark validity
 
-## 5. Benchmark validity checks
+For every quantitative outcome claim ask:
+- metric defined?
+- fair baseline defined?
+- representative task/data?
+- model/version/tool settings comparable?
+- enough repetitions for stochastic output?
+- variance/failures reported?
+- cherry-picking or tuning risk?
+- reproducible materials?
 
-For any numerical performance/outcome claim, ask:
-- Is the metric defined?
-- Is the baseline defined and fair?
-- Does the benchmark task match the claimed real-world use?
-- Are model/version/tool settings comparable?
-- Is sample size/repetition adequate for stochastic outputs?
-- Are failed cases and variance reported?
-- Could the benchmark be contaminated, cherry-picked, or tuned to the skill?
-- Can the result be reproduced from available materials?
+If not, label the numerical claim `Unproven` even if intrinsic quality is strong.
 
-If these are missing, label the numerical claim `Unproven` even if the skill itself is otherwise strong.
+## Overall promise fulfillment
 
-## 6. Overall promise fulfillment
+Use:
+- **Verified**
+- **Supported**
+- **Partially supported**
+- **Unproven**
+- **Contradicted**
 
-Summarize core promises using one of:
-- **Verified** — core promises independently validated or strongly reproduced.
-- **Supported** — core promises map well to implementation and meaningful repository evidence.
-- **Partially supported** — some core promises have evidence, others remain unproven.
-- **Unproven** — central value proposition lacks adequate evidence.
-- **Contradicted** — one or more central promises conflict with observed behavior/evidence.
+Report this separately from the rubric score.
 
-This is not a replacement for the 0–100 quality score. Report both when promise fulfillment is material.
+## Scoring relationship
 
-## 7. Relationship to scoring
+Feed promise evidence primarily into:
+- Evidence of effectiveness
+- Verification & self-correction
+- Reusability & composability for compatibility/reuse claims
+- Safety & failure modes for safety claims
+- Capability uplift for incremental-value claims
 
-Feed the result primarily into:
-- **Evidence of effectiveness**;
-- **Verification and self-correction**;
-- **Reusability** for portability/compatibility claims;
-- **Safety** for safety claims;
-- **Model leverage / capability uplift** for claimed incremental value.
-
-Do not double-penalize the same missing evidence across every dimension. Penalize where causally relevant and explain the main effect once.
-
-A strong unsupported marketing claim should lower evidence confidence, not automatically erase genuine intrinsic quality. A contradicted **core** promise is more serious and may materially lower the overall recommendation.
+Do not double-penalize one missing piece of evidence across every dimension.

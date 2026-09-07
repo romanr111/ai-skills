@@ -15,7 +15,7 @@ A collection of custom skills for AI coding agents (Kimi, Claude, Codex, etc.).
 
 ## Usage
 
-These skills follow the [Kimi CLI skill format](https://docs.kimi.ai/skills), but are generally portable to any agent system that reads `SKILL.md` files.
+The skills use `SKILL.md` entry points and are intended to be portable across skill-capable agents. Some older skills were originally shaped around Kimi CLI conventions; inspect each skill's metadata and installation notes for agent-specific features.
 
 To use with **Kimi CLI**:
 
@@ -25,9 +25,8 @@ ln -s $(pwd)/code-review ~/.kimi/skills/code-review
 ln -s $(pwd)/tdd ~/.kimi/skills/tdd
 ```
 
-To use with **Claude / other agents**:
-Reference the `SKILL.md` file directly in your prompt or system instructions.
+For Claude Code, Codex, and other Agent Skills-compatible environments, copy or symlink the relevant skill directory into the agent's supported skill location. Agent-specific metadata such as `agents/openai.yaml` is optional and does not replace the portable `SKILL.md` core.
 
 ## License
 
-These are personal/custom skills. Use and modify as needed.
+MIT — see [LICENSE](./LICENSE).
