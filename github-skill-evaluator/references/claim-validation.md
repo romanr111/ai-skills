@@ -58,14 +58,19 @@ Run the **same representative task** with:
 1. the skill enabled;
 2. the same model/tool environment without the skill.
 
-Judge outputs blind when feasible and record:
+Persist both outputs before judging. The scorer validates that the referenced artifacts exist and are distinct; this prevents a `strong` uplift claim from being backed only by descriptive strings.
+
+Record:
 
 ```json
 {
   "uplift_probe": {
     "task": "representative task",
-    "with_skill_output": "path-or-reference",
-    "baseline_output": "path-or-reference",
+    "probe_root": "/absolute/path/to/probe-artifacts",
+    "with_skill_output": "with-skill/output.txt",
+    "baseline_output": "baseline/output.txt",
+    "execution_model": "model-id-used-for-both-arms",
+    "same_model_environment": true,
     "judged_blind": true,
     "judge_verdict": "with-skill materially better on X; equal on Y",
     "runs": 1
@@ -74,10 +79,13 @@ Judge outputs blind when feasible and record:
 ```
 
 Rules:
-- `strong` capability uplift requires at least one recorded probe.
+- `probe_root` must exist; output paths are relative to it and must resolve to existing, different files or directories.
+- `same_model_environment: true` means task, model, tool access, and material execution settings were held constant except for the skill being enabled.
+- `strong` capability uplift requires at least one valid recorded probe.
 - `exceptional` requires at least three runs/cases and should remain rare.
 - one probe is directional evidence, not a benchmark.
-- without a probe, uplift cannot exceed `adequate` and must be labeled **Inferred**.
+- without a valid probe, uplift cannot exceed `adequate` and must be labeled **Inferred**.
+- the scorer can enforce artifact existence and declared comparability, but it cannot prove the evaluator actually blinded itself or that the declaration is truthful; preserve that limitation in confidence language.
 
 ### Level 5 — Adversarial/failure-case validation
 For high-risk or high-confidence claims, test ambiguous input, missing dependencies, unsafe edges, contradictions, and domain-specific traps.
