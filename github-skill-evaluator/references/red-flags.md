@@ -1,92 +1,72 @@
 # Red Flags and Quality Caps
 
-## Table of contents
+Flag only material issues.
 
-1. Content and methodology
-2. Portability and dependencies
-3. Safety and integrity
-4. Evidence manipulation
-5. Capability redundancy
-6. Tier caps
+## Content and methodology
+- README-driven hype unsupported by implementation
+- generic LLM advice presented as expertise
+- excessive verbosity/prompt bloat
+- contradictory instructions
+- cargo-cult patterns
+- vague success criteria
+- objectively verifiable outputs with no verification
+- complexity without behavioral benefit
 
-## 1. Content and methodology
+## Evidence integrity
+- scoring a dimension without an inspected evidence path
+- stars/forks used as correctness evidence
+- screenshots presented as benchmarks
+- benchmark numbers without metric/baseline/method/repetition
+- tests/evals that do not measure the promised outcome
+- cherry-picked examples presented as general effectiveness
+- `strong` or `exceptional` capability uplift claimed without the required baseline probe
 
-Flag when material:
-- README-driven hype unsupported by implementation;
-- generic LLM-generated advice presented as expertise;
-- excessive verbosity or prompt bloat;
-- contradictory instructions;
-- cargo-cult architecture/pattern mandates;
-- vague success criteria;
-- no verification for outputs that are objectively verifiable;
-- many examples that do not exercise failure modes;
-- complexity added without behavioral benefit.
+## Portability and dependencies
+- hard-coded repository paths
+- hidden environment variables/private infrastructure
+- unavailable MCP/tool dependencies
+- unnecessary vendor lock-in
+- fragile platform assumptions
+- disproportionate install/supply-chain cost
 
-## 2. Portability and dependencies
+Specialization itself is not a defect.
 
-Flag:
-- hard-coded repository paths;
-- assumptions about one project structure without declaring them;
-- private tools/infrastructure required but undocumented;
-- hidden environment variables;
-- unavailable MCP/tool dependencies;
-- unnecessary vendor lock-in;
-- fragile shell/platform assumptions;
-- dependencies with disproportionate installation or supply-chain cost.
+## Safety and integrity
+- destructive commands without adequate confirmation/scope/rollback
+- secret exfiltration or unsafe logging
+- arbitrary remote execution/download-and-run without validation
+- broad permissions unjustified by task
+- silent destructive side effects
+- bypassing security controls
+- broken primary function
+- deceptive behavior
+- copied material with unclear provenance
+- unclear/incompatible license for intended reuse
 
-Specialization is not itself a defect. Penalize only unjustified or hidden coupling.
+## Capability redundancy
+Low marginal value if the skill mainly says:
+- write clean code
+- follow best practices
+- use SOLID
+- make UI polished
+- test your work
+- think carefully
+- use meaningful names
+- handle errors
 
-## 3. Safety and integrity
+These can support a concrete workflow but are not expert uplift by themselves.
 
-Flag strongly:
-- destructive commands without confirmation, scope check, backup, or rollback where appropriate;
-- secret exfiltration or unsafe logging;
-- arbitrary remote execution/download-and-run behavior without validation;
-- broad permission requests not justified by task;
-- silent destructive side effects;
-- instructions to bypass security controls;
-- functionally broken critical paths;
-- deceptive behavior;
-- copied material with unclear provenance when reuse rights matter;
-- license missing or incompatible with intended reuse.
-
-## 4. Evidence manipulation
-
-Flag:
-- stars/forks used as proof of correctness;
-- screenshots presented as benchmarks;
-- cherry-picked success examples;
-- claims of production use with no supporting evidence;
-- benchmark numbers without method/data/version;
-- tests that merely assert implementation details rather than claimed behavior.
-
-## 5. Capability redundancy
-
-Flag low marginal value when the skill primarily says:
-- write clean code;
-- follow best practices;
-- use SOLID;
-- make the UI polished;
-- test your work;
-- think step-by-step/carefully;
-- use meaningful names;
-- handle errors.
-
-These may be useful as part of a concrete workflow, but do not count them as expert uplift by themselves.
-
-## 6. Tier caps
-
-Apply judgment, but use these default caps:
+## Tier caps
 
 | Condition | Default maximum tier |
 |---|---|
 | Critical destructive behavior without adequate safeguards | D |
 | Malicious/deceptive behavior or clearly broken primary function | F |
-| Required private/unavailable dependency is hidden/undocumented and blocks reuse | C |
-| Material unresolved secret-exposure / arbitrary remote execution path | D or F depending on severity |
-| No license for intended open-source reuse | No automatic cap; flag legal uncertainty and reduce fit/reusability if material |
-| No tests/evals | No automatic cap; reduce Evidence/Verification only to degree justified by domain and claims |
-| Low GitHub activity | No automatic cap |
-| Low stars | Never a cap |
+| Hidden required private/unavailable dependency blocks reuse | C |
+| Material unresolved secret exposure / arbitrary remote execution | D or F |
+| No clear license for intended open-source reuse | no automatic cap; flag and reduce reuse/fit when material |
+| No tests/evals | no automatic cap; reduce only relevant evidence/verification bands |
+| Low activity | no automatic cap |
+| Low stars | never a cap |
 
-Explain every cap in the verdict.
+Explain every cap.
